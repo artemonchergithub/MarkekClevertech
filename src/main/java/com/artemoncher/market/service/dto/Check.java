@@ -1,5 +1,9 @@
 package com.artemoncher.market.service.dto;
 
+import com.artemoncher.market.repository.model.Product;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +18,19 @@ public class Check implements DtoEntity{
             total+= product.getTotal();
             savedMoney += product.getSavedMoney();
         });
+    }
+
+    public void printCheck(){
+        System.out.printf("%-5s %-20s %10s %10s %n", "QTY", "DESCRIPTION", "PRICE", "TOTAL");
+        for (ProductDto product : products) {
+            System.out.printf("%-5s %-20s %10s %10s %n", product.getQuantity(), product.getName(),
+                    "$" + product.getCost(), "$" + product.getTotal());
+        }
+        System.out.printf("%-10s %37s %n", "DISC10%", "$" +
+                new BigDecimal(savedMoney.toString()).setScale(2, RoundingMode.HALF_EVEN).floatValue());
+        System.out.printf("%-10s %37s %n", "TOTAL", "$" +
+                new BigDecimal(total.toString()).setScale(2, RoundingMode.HALF_EVEN));
+
     }
 
     public List<ProductDto> getProducts() {
@@ -41,15 +58,10 @@ public class Check implements DtoEntity{
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("QTY\t\tDESCRIPTION\t\t\t\tPRICE\t\tTOTAL\n" +
-                                                "-------------------------------------------------\n");
-        for (ProductDto product : products) {
-            result.append(product.toString())
-                    .append("\n");
-        }
-        result.append("-------------------------------------------------\n" + "VAl10%\t\t\t\t\t\t\t$")
-                .append(savedMoney).append("TOTAL\t\t\t\t\t\t\t$")
-                .append(total);
-        return result.toString();
+        return "Check{" +
+                "products=" + products +
+                ", savedMoney=" + savedMoney +
+                ", total=" + total +
+                '}';
     }
 }

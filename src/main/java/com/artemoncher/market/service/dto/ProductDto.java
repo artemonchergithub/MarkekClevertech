@@ -1,5 +1,7 @@
 package com.artemoncher.market.service.dto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 public class ProductDto implements DtoEntity{
@@ -14,10 +16,10 @@ public class ProductDto implements DtoEntity{
 
     public Float getTotal(){
         if (discounted && quantity >= 5) {
-            savedMoney = quantity * cost * 0.1f;
-            return quantity * cost * 0.9f;
+            savedMoney = new BigDecimal(quantity * cost * 0.1f).setScale(2, RoundingMode.HALF_EVEN).floatValue();
+            return new BigDecimal(quantity * cost * 0.9f).setScale(2, RoundingMode.HALF_EVEN).floatValue();
         } else {
-            return quantity * cost;
+            return new BigDecimal(quantity * cost).setScale(2, RoundingMode.HALF_EVEN).floatValue();
         }
     }
 

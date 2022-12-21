@@ -26,6 +26,3 @@ public class Controller {
         return ResponseEntity.ok(service.getCheck(ids, quantity, cardId));
     }
 }
-
-//http://localhost:8080/check?ids=1,2,3,4,5&quantity=4,3,2,1,2&cardId=1234
-//http://localhost:8080/check?ids=1,2,3,4,5,6,7,8,9&quantity=10,2,7,5,2,6,7,8,9&cardId=1234

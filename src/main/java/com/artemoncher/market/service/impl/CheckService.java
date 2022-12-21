@@ -38,8 +38,22 @@ public class CheckService implements Service<Check> {
         List<Integer> promotedProductsId = new ArrayList<>();
         Check check;
         try {
-            ids = Arrays.stream(idsString.split(",")).map(Integer::parseInt).toList();
-            quantity = Arrays.stream(quantityString.split(",")).map(Integer::parseInt).toList();
+            ids = Arrays.stream(idsString.split(","))
+                    .map(Integer::parseInt)
+                    .peek(num ->{
+                        if (num < 1) {
+                            throw new ServiceException("Id is non-positive");
+                        }
+                    })
+                    .toList();
+            quantity = Arrays.stream(quantityString.split(","))
+                    .map(Integer::parseInt)
+                    .peek(amount->{
+                        if (amount < 1) {
+                            throw new ServiceException("Quantity is non-positive");
+                        }
+                    })
+                    .toList();
         } catch (NumberFormatException e){
             throw new ServiceException("URL is malformed", e);
         }
@@ -51,14 +65,18 @@ public class CheckService implements Service<Check> {
         productRepository.findAllById(ids).forEach(products::add);
 
         if (products.contains(null)){
-            throw new ServiceException("Id is wrong");
+            throw new ServiceException("URL contains an invalid id");
         }
 
         if (cardId.length() > 0) {
+            if (cardId.contains(",")){
+                throw new ServiceException("You can only one discount card per time");
+            }
+
             card = cardRepository.findByName(cardId);
 
             if (Objects.isNull(card)) {
-                throw new ServiceException("URL is malformed");
+                throw new ServiceException("Discount card is invalid");
             }
             promotedProductsId = Arrays.stream(card.getProductsId().split(",")).map(Integer::parseInt).toList();
         }
@@ -74,7 +92,7 @@ public class CheckService implements Service<Check> {
         }
 
         check = new Check(productDtos);
-        System.out.println(check);
+        check.printCheck();
 
         return check;
     }

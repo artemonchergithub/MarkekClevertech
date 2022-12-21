@@ -1,6 +1,6 @@
 package com.artemoncher.market.service.exception;
 
-public class ServiceException extends Exception{
+public class ServiceException extends RuntimeException{
     public ServiceException() {
     }
 
